@@ -338,9 +338,10 @@ FOOTER ACTIONS
   transition: all 0.2s ease;
 }
 
-.note-card:hover .note-actions {
-  opacity: 1;
-  visibility: visible;
+.note-card:hover .note-actions,
+.note-actions.menu-open {
+    opacity: 1;
+    visibility: visible;
 }
 
 /* =========================
@@ -379,16 +380,24 @@ MENU
 
 .keep-menu {
   position: absolute;
-  right: 0;
-  bottom: 42px;
+  top: 40px;
+  left: 0px;
+
   width: 190px;
+
   background: #202124;
+
   border: 1px solid #5f6368;
+
   border-radius: 8px;
+
   overflow: hidden;
+
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+
   z-index: 1000;
 }
+
 
 .keep-menu button {
   width: 100%;
