@@ -12,6 +12,12 @@ function Dashboard() {
 
   const [expanded, setExpanded] = useState(false);
   const [openMenu, setOpenMenu] = useState(null);
+  const [editingTask, setEditingTask] = useState(null);
+
+  const [editData, setEditData] = useState({
+    title: "",
+    description: "",
+  });
 
   const [formData, setFormData] = useState({
     title: "",
@@ -49,6 +55,12 @@ function Dashboard() {
     const handleClickOutside = (event) => {
       if (noteRef.current && !noteRef.current.contains(event.target)) {
         setExpanded(false);
+      }
+
+      if (
+        !event.target.closest(".menu-wrapper") &&
+        !event.target.closest(".keep-menu")
+      ) {
         setOpenMenu(null);
       }
     };
@@ -103,6 +115,26 @@ function Dashboard() {
       });
 
       setTasks(tasks.filter((task) => task._id !== id));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleUpdateTask = async () => {
+    try {
+      const response = await API.put(`/tasks/${editingTask._id}`, editData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      setTasks(
+        tasks.map((task) =>
+          task._id === editingTask._id ? response.data : task,
+        ),
+      );
+
+      setEditingTask(null);
     } catch (error) {
       console.error(error);
     }
@@ -193,7 +225,19 @@ function Dashboard() {
                     openMenu === task._id ? "menu-open" : ""
                   }`}
                 >
-                  <button className="icon-btn" title="Edit">
+                  <button
+                    className="icon-btn"
+                    onClick={() => {
+                      setEditingTask(task);
+
+                      setEditData({
+                        title: task.title,
+                        description: task.description,
+                      });
+
+                      setOpenMenu(null);
+                    }}
+                  >
                     ✏️
                   </button>
 
@@ -217,13 +261,21 @@ function Dashboard() {
 
                     {openMenu === task._id && (
                       <div className="keep-menu">
-                        <button onClick={() => setOpenMenu(null)}>Archive</button>
+                        <button onClick={() => setOpenMenu(null)}>
+                          Archive
+                        </button>
 
-                        <button onClick={() => setOpenMenu(null)}>Change Status</button>
+                        <button onClick={() => setOpenMenu(null)}>
+                          Change Status
+                        </button>
 
-                        <button onClick={() => setOpenMenu(null)}>Duplicate</button>
+                        <button onClick={() => setOpenMenu(null)}>
+                          Duplicate
+                        </button>
 
-                        <button onClick={() => setOpenMenu(null)}>Details</button>
+                        <button onClick={() => setOpenMenu(null)}>
+                          Details
+                        </button>
                       </div>
                     )}
                   </div>
@@ -231,6 +283,52 @@ function Dashboard() {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {editingTask && (
+        <div
+          className="keep-modal-overlay"
+          onClick={() => setEditingTask(null)}
+        >
+          <div className="keep-modal" onClick={(e) => e.stopPropagation()}>
+            <input
+              type="text"
+              className="modal-title"
+              value={editData.title}
+              onChange={(e) =>
+                setEditData({
+                  ...editData,
+                  title: e.target.value,
+                })
+              }
+            />
+
+            <textarea
+              className="modal-content"
+              rows="10"
+              value={editData.description}
+              onChange={(e) =>
+                setEditData({
+                  ...editData,
+                  description: e.target.value,
+                })
+              }
+            />
+
+            <div className="modal-actions">
+              <button
+                className="close-btn"
+                onClick={() => setEditingTask(null)}
+              >
+                Close
+              </button>
+
+              <button className="create-btn" onClick={handleUpdateTask}>
+                Save
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
