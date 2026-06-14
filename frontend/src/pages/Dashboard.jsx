@@ -56,9 +56,7 @@ function Dashboard() {
                 formData,
                 {
                     headers: {
-                        Authorization: `Bearer ${localStorage.getItem(
-                            "token"
-                        )}`,
+                        Authorization: `Bearer ${localStorage.getItem("token")}`,
                     },
                 }
             );
@@ -95,8 +93,9 @@ function Dashboard() {
 
     return (
         <div className="dashboard-container">
+
             <div className="dashboard-header">
-                <h1>📋 Todo Dashboard</h1>
+                <h1>Taskify Dashboard</h1>
 
                 <button
                     className="logout-btn"
@@ -107,14 +106,16 @@ function Dashboard() {
             </div>
 
             <div className="task-form-card">
+
                 <h2>Create New Task</h2>
 
                 <form onSubmit={handleCreateTask}>
+
                     <div className="input-group">
                         <input
                             type="text"
                             name="title"
-                            placeholder="Task Title"
+                            placeholder="Enter task title"
                             value={formData.title}
                             onChange={handleChange}
                             required
@@ -124,7 +125,7 @@ function Dashboard() {
                     <div className="input-group">
                         <textarea
                             name="description"
-                            placeholder="Task Description"
+                            placeholder="Enter task description"
                             value={formData.description}
                             onChange={handleChange}
                             rows="4"
@@ -137,48 +138,64 @@ function Dashboard() {
                     >
                         Add Task
                     </button>
+
                 </form>
             </div>
 
             <div className="tasks-section">
+
                 <h2>Your Tasks</h2>
 
                 {loading ? (
-                    <p>Loading Tasks...</p>
+                    <p className="empty-text">
+                        Loading Tasks...
+                    </p>
                 ) : tasks.length === 0 ? (
-                    <p>No tasks found.</p>
+                    <p className="empty-text">
+                        No tasks found.
+                    </p>
                 ) : (
-                    tasks.map((task) => (
-                        <div
-                            className="task-card"
-                            key={task._id}
-                        >
-                            <div>
+                    <div className="task-grid">
+
+                        {tasks.map((task) => (
+
+                            <div
+                                className="task-card"
+                                key={task._id}
+                            >
                                 <h3>{task.title}</h3>
 
                                 <p>
-                                    {task.description}
+                                    {task.description ||
+                                        "No description"}
                                 </p>
 
-                                <span className="task-status">
-                                    {task.status}
-                                </span>
+                                <div className="task-footer">
+
+                                    <span className="task-status">
+                                        {task.status}
+                                    </span>
+
+                                    <button
+                                        className="delete-btn"
+                                        onClick={() =>
+                                            handleDeleteTask(
+                                                task._id
+                                            )
+                                        }
+                                    >
+                                        Delete
+                                    </button>
+
+                                </div>
                             </div>
 
-                            <button
-                                className="delete-btn"
-                                onClick={() =>
-                                    handleDeleteTask(
-                                        task._id
-                                    )
-                                }
-                            >
-                                Delete
-                            </button>
-                        </div>
-                    ))
+                        ))}
+
+                    </div>
                 )}
             </div>
+
         </div>
     );
 }
