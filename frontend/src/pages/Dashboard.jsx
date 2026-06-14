@@ -245,10 +245,6 @@ function Dashboard() {
 
                             <div className="note-footer">
 
-                                <span className="task-status">
-                                    {task.status}
-                                </span>
-
                                 <div className="note-actions">
 
                                     <button
