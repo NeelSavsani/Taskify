@@ -1,14 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../services/api";
 
 function Dashboard() {
     const navigate = useNavigate();
 
+    const noteRef = useRef(null);
+
     const [tasks, setTasks] = useState([]);
     const [loading, setLoading] = useState(true);
 
     const [expanded, setExpanded] = useState(false);
+    const [openMenu, setOpenMenu] = useState(null);
 
     const [formData, setFormData] = useState({
         title: "",
@@ -19,7 +22,9 @@ function Dashboard() {
         try {
             const response = await API.get("/tasks", {
                 headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    Authorization: `Bearer ${localStorage.getItem(
+                        "token"
+                    )}`,
                 },
             });
 
@@ -42,6 +47,30 @@ function Dashboard() {
         fetchTasks();
     }, []);
 
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (
+                noteRef.current &&
+                !noteRef.current.contains(event.target)
+            ) {
+                setExpanded(false);
+                setOpenMenu(null);
+            }
+        };
+
+        document.addEventListener(
+            "mousedown",
+            handleClickOutside
+        );
+
+        return () => {
+            document.removeEventListener(
+                "mousedown",
+                handleClickOutside
+            );
+        };
+    }, []);
+
     const handleChange = (e) => {
         setFormData({
             ...formData,
@@ -52,13 +81,22 @@ function Dashboard() {
     const handleCreateTask = async (e) => {
         e.preventDefault();
 
+        if (
+            !formData.title.trim() &&
+            !formData.description.trim()
+        ) {
+            return;
+        }
+
         try {
             const response = await API.post(
                 "/tasks",
                 formData,
                 {
                     headers: {
-                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                        Authorization: `Bearer ${localStorage.getItem(
+                            "token"
+                        )}`,
                     },
                 }
             );
@@ -80,11 +118,17 @@ function Dashboard() {
         try {
             await API.delete(`/tasks/${id}`, {
                 headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    Authorization: `Bearer ${localStorage.getItem(
+                        "token"
+                    )}`,
                 },
             });
 
-            setTasks(tasks.filter((task) => task._id !== id));
+            setTasks(
+                tasks.filter(
+                    (task) => task._id !== id
+                )
+            );
         } catch (error) {
             console.error(error);
         }
@@ -109,55 +153,69 @@ function Dashboard() {
                 </button>
             </header>
 
-            <form
-                className={`keep-note-box ${expanded ? "expanded" : ""}`}
-                onSubmit={handleCreateTask}
+            <div
+                ref={noteRef}
+                className={`keep-note-box ${
+                    expanded ? "expanded" : ""
+                }`}
             >
-                {expanded && (
+                {!expanded ? (
                     <input
-                        type="text"
-                        name="title"
-                        placeholder="Title"
-                        value={formData.title}
-                        onChange={handleChange}
-                        className="keep-title"
-                        required
+                        className="keep-placeholder"
+                        placeholder="Take a note..."
+                        onFocus={() =>
+                            setExpanded(true)
+                        }
+                        readOnly
                     />
+                ) : (
+                    <>
+                        <input
+                            type="text"
+                            name="title"
+                            placeholder="Title"
+                            value={formData.title}
+                            onChange={handleChange}
+                            className="keep-title"
+                        />
+
+                        <textarea
+                            name="description"
+                            placeholder="Take a note..."
+                            value={
+                                formData.description
+                            }
+                            onChange={handleChange}
+                            rows="5"
+                            className="keep-content"
+                        />
+
+                        <div className="keep-actions">
+                            <button
+                                type="button"
+                                className="close-btn"
+                                onClick={() =>
+                                    setExpanded(
+                                        false
+                                    )
+                                }
+                            >
+                                Close
+                            </button>
+
+                            <button
+                                type="button"
+                                className="create-btn"
+                                onClick={
+                                    handleCreateTask
+                                }
+                            >
+                                Add
+                            </button>
+                        </div>
+                    </>
                 )}
-
-                <textarea
-                    name="description"
-                    placeholder="Take a note..."
-                    value={formData.description}
-                    onChange={handleChange}
-                    onFocus={() => setExpanded(true)}
-                    rows={expanded ? 4 : 1}
-                    className="keep-content"
-                />
-
-                {expanded && (
-                    <div className="keep-actions">
-
-                        <button
-                            type="button"
-                            className="close-btn"
-                            onClick={() => {
-                                setExpanded(false);
-                            }}
-                        >
-                            Close
-                        </button>
-
-                        <button
-                            type="submit"
-                            className="create-btn"
-                        >
-                            Create
-                        </button>
-
-                    </div>
-                )}
-            </form>
+            </div>
 
             {loading ? (
                 <p className="empty-text">
@@ -175,7 +233,11 @@ function Dashboard() {
                             key={task._id}
                             className="note-card"
                         >
-                            <h3>{task.title}</h3>
+                            {task.title && (
+                                <h3>
+                                    {task.title}
+                                </h3>
+                            )}
 
                             <p>
                                 {task.description}
@@ -187,14 +249,66 @@ function Dashboard() {
                                     {task.status}
                                 </span>
 
-                                <button
-                                    className="delete-btn"
-                                    onClick={() =>
-                                        handleDeleteTask(task._id)
-                                    }
-                                >
-                                    Delete
-                                </button>
+                                <div className="note-actions">
+
+                                    <button
+                                        className="icon-btn"
+                                        title="Edit"
+                                    >
+                                        ✏️
+                                    </button>
+
+                                    <button
+                                        className="icon-btn"
+                                        title="Delete"
+                                        onClick={() =>
+                                            handleDeleteTask(
+                                                task._id
+                                            )
+                                        }
+                                    >
+                                        🗑️
+                                    </button>
+
+                                    <div className="menu-wrapper">
+                                        <button
+                                            className="icon-btn"
+                                            onClick={() =>
+                                                setOpenMenu(
+                                                    openMenu ===
+                                                        task._id
+                                                        ? null
+                                                        : task._id
+                                                )
+                                            }
+                                        >
+                                            ⋮
+                                        </button>
+
+                                        {openMenu ===
+                                            task._id && (
+                                            <div className="keep-menu">
+                                                <button>
+                                                    Archive
+                                                </button>
+
+                                                <button>
+                                                    Change
+                                                    Status
+                                                </button>
+
+                                                <button>
+                                                    Duplicate
+                                                </button>
+
+                                                <button>
+                                                    Details
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                </div>
 
                             </div>
                         </div>
@@ -202,7 +316,6 @@ function Dashboard() {
 
                 </div>
             )}
-
         </div>
     );
 }
