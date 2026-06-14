@@ -1,3 +1,7 @@
+/* =========================
+   GLOBAL
+========================= */
+
 * {
     margin: 0;
     padding: 0;
@@ -6,8 +10,17 @@
 
 body {
     font-family: "Segoe UI", sans-serif;
-    background: linear-gradient(135deg, #0f172a, #1e293b);
+    background: #202124;
+    color: #e8eaed;
 }
+
+a {
+    text-decoration: none;
+}
+
+/* =========================
+   LOGIN & REGISTER
+========================= */
 
 .login-container {
     min-height: 100vh;
@@ -15,27 +28,28 @@ body {
     justify-content: center;
     align-items: center;
     padding: 20px;
+    background: #202124;
 }
 
 .login-card {
-    width: 420px;
-    padding: 40px;
-    border-radius: 20px;
-    background: rgba(255,255,255,0.08);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255,255,255,0.1);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    width: 100%;
+    max-width: 430px;
+    padding: 35px;
+    border-radius: 16px;
+    background: #202124;
+    border: 1px solid #5f6368;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
 }
 
 .login-card h1 {
     text-align: center;
-    color: white;
+    color: #e8eaed;
     margin-bottom: 10px;
 }
 
 .subtitle {
     text-align: center;
-    color: #cbd5e1;
+    color: #9aa0a6;
     margin-bottom: 25px;
 }
 
@@ -45,57 +59,69 @@ body {
 
 .input-group label {
     display: block;
-    color: white;
-    margin-bottom: 6px;
+    color: #e8eaed;
+    margin-bottom: 8px;
 }
 
-.input-group input {
+.input-group input,
+.input-group textarea {
     width: 100%;
-    padding: 14px;
-    border-radius: 10px;
-    border: 1px solid #475569;
-    background: rgba(255,255,255,0.05);
-    color: white;
+    padding: 13px;
+    border-radius: 8px;
+    border: 1px solid #5f6368;
+    background: #202124;
+    color: #e8eaed;
+    outline: none;
 }
 
-.input-group input::placeholder {
-    color: #94a3b8;
+.input-group input:focus,
+.input-group textarea:focus {
+    border-color: #8ab4f8;
+}
+
+.input-group input::placeholder,
+.input-group textarea::placeholder {
+    color: #9aa0a6;
 }
 
 .login-btn {
     width: 100%;
-    padding: 14px;
+    padding: 13px;
     border: none;
-    border-radius: 10px;
-    background: #3b82f6;
-    color: white;
-    font-size: 16px;
-    font-weight: bold;
+    border-radius: 8px;
+    background: #8ab4f8;
+    color: #202124;
+    font-weight: 600;
     cursor: pointer;
+    transition: 0.2s;
 }
 
 .login-btn:hover {
-    background: #2563eb;
+    opacity: 0.9;
 }
 
 .register-link {
-    margin-top: 20px;
     text-align: center;
-    color: #cbd5e1;
+    margin-top: 20px;
+    color: #9aa0a6;
 }
 
 .register-link a {
-    color: #60a5fa;
-    text-decoration: none;
+    color: #8ab4f8;
 }
 
 .error-box {
     margin-bottom: 20px;
-    padding: 10px;
-    border-radius: 10px;
-    background: rgba(255,0,0,0.2);
-    color: white;
+    padding: 12px;
+    border-radius: 8px;
+    background: rgba(234, 67, 53, 0.15);
+    border: 1px solid #ea4335;
+    color: #e8eaed;
 }
+
+/* =========================
+   PASSWORD EYE ICON
+========================= */
 
 .password-wrapper {
     position: relative;
@@ -112,141 +138,168 @@ body {
     transform: translateY(-50%);
     background: transparent;
     border: none;
-    color: #94a3b8;
+    color: #9aa0a6;
     cursor: pointer;
     font-size: 16px;
 }
 
 .eye-btn:hover {
-    color: #ffffff;
+    color: #e8eaed;
 }
 
 /* =========================
-   GOOGLE KEEP STYLE DASHBOARD
+   GOOGLE KEEP DASHBOARD
 ========================= */
 
 .dashboard-container {
     min-height: 100vh;
+    background: #202124;
     padding: 20px 40px;
 }
+
+/* Header */
 
 .dashboard-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 35px;
+    margin-bottom: 30px;
 }
 
 .dashboard-header h1 {
-    color: white;
+    color: #e8eaed;
     font-size: 32px;
+    font-weight: 600;
 }
+
+.logout-btn {
+    background: #ea4335;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.logout-btn:hover {
+    opacity: 0.9;
+}
+
+/* Create Note */
 
 .keep-note-box {
     width: 100%;
     max-width: 600px;
-    margin: auto;
+    margin: 0 auto 35px;
     background: #202124;
     border: 1px solid #5f6368;
     border-radius: 12px;
-    padding: 12px 16px;
-    box-shadow: 0 1px 8px rgba(0,0,0,0.4);
+    padding: 14px 16px;
+    transition: 0.2s;
 }
 
 .keep-note-box.expanded {
-    padding: 15px;
+    padding: 16px;
 }
 
 .keep-title {
     width: 100%;
     border: none;
-    outline: none;
     background: transparent;
-    color: white;
-    font-size: 18px;
+    color: #e8eaed;
+    font-size: 17px;
+    font-weight: 500;
     margin-bottom: 12px;
+    outline: none;
 }
 
 .keep-content {
     width: 100%;
     border: none;
-    outline: none;
-    resize: none;
     background: transparent;
-    color: white;
+    color: #e8eaed;
+    resize: none;
+    outline: none;
     font-size: 15px;
 }
 
-.keep-content::placeholder,
-.keep-title::placeholder {
+.keep-title::placeholder,
+.keep-content::placeholder {
     color: #9aa0a6;
 }
 
 .keep-actions {
-    margin-top: 15px;
     display: flex;
     justify-content: flex-end;
+    align-items: center;
     gap: 10px;
+    margin-top: 12px;
 }
 
 .close-btn {
     background: transparent;
-    color: white;
     border: none;
-    padding: 10px 15px;
+    color: #e8eaed;
     cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 4px;
+}
+
+.close-btn:hover {
+    background: #3c4043;
 }
 
 .create-btn {
     background: #8ab4f8;
-    color: black;
+    color: #202124;
     border: none;
-    padding: 10px 18px;
+    padding: 8px 18px;
     border-radius: 6px;
     cursor: pointer;
     font-weight: 600;
 }
 
-.notes-grid {
-    margin-top: 40px;
+/* Notes Grid */
 
+.notes-grid {
     column-count: 4;
     column-gap: 16px;
 }
 
 .note-card {
-    display: inline-block;
     width: 100%;
+    display: inline-block;
+    break-inside: avoid;
     margin-bottom: 16px;
 
     background: #202124;
-
     border: 1px solid #5f6368;
-
     border-radius: 12px;
-
-    padding: 16px;
-
-    break-inside: avoid;
-
+    padding: 15px;
     transition: 0.2s;
 }
 
 .note-card:hover {
-    box-shadow: 0 2px 10px rgba(255,255,255,0.08);
+    box-shadow: 0 1px 8px rgba(255, 255, 255, 0.08);
 }
 
 .note-card h3 {
-    color: white;
+    color: #e8eaed;
     margin-bottom: 10px;
+    font-size: 16px;
+    font-weight: 600;
 }
 
 .note-card p {
     color: #e8eaed;
+    font-size: 14px;
     line-height: 1.6;
-    margin-bottom: 15px;
     white-space: pre-wrap;
+    margin-bottom: 15px;
 }
+
+/* Footer */
 
 .note-footer {
     display: flex;
@@ -256,39 +309,51 @@ body {
 
 .task-status {
     background: #3c4043;
-    color: white;
-    padding: 5px 10px;
+    color: #e8eaed;
+    padding: 4px 10px;
     border-radius: 20px;
     font-size: 12px;
+}
+
+.note-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.edit-btn {
+    background: #8ab4f8;
+    color: #202124;
+    border: none;
+    padding: 7px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
 }
 
 .delete-btn {
     background: #ea4335;
     color: white;
     border: none;
-    padding: 8px 12px;
+    padding: 7px 12px;
     border-radius: 6px;
     cursor: pointer;
 }
 
+.edit-btn:hover,
 .delete-btn:hover {
-    background: #d93025;
-}
-
-.logout-btn {
-    background: #ea4335;
-    color: white;
-    border: none;
-    padding: 10px 16px;
-    border-radius: 8px;
-    cursor: pointer;
+    opacity: 0.9;
 }
 
 .empty-text {
-    color: white;
     text-align: center;
+    color: #9aa0a6;
     margin-top: 40px;
+    font-size: 16px;
 }
+
+/* =========================
+   RESPONSIVE
+========================= */
 
 @media (max-width: 1200px) {
     .notes-grid {
@@ -303,17 +368,24 @@ body {
 }
 
 @media (max-width: 600px) {
-
     .dashboard-container {
         padding: 20px;
+    }
+
+    .dashboard-header {
+        flex-direction: column;
+        gap: 15px;
     }
 
     .notes-grid {
         column-count: 1;
     }
 
-    .dashboard-header {
-        flex-direction: column;
-        gap: 15px;
+    .keep-note-box {
+        max-width: 100%;
+    }
+
+    .login-card {
+        padding: 25px;
     }
 }
