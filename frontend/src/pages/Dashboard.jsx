@@ -8,6 +8,8 @@ function Dashboard() {
     const [tasks, setTasks] = useState([]);
     const [loading, setLoading] = useState(true);
 
+    const [expanded, setExpanded] = useState(false);
+
     const [formData, setFormData] = useState({
         title: "",
         description: "",
@@ -67,6 +69,8 @@ function Dashboard() {
                 title: "",
                 description: "",
             });
+
+            setExpanded(false);
         } catch (error) {
             console.error(error);
         }
@@ -94,8 +98,8 @@ function Dashboard() {
     return (
         <div className="dashboard-container">
 
-            <div className="dashboard-header">
-                <h1>Taskify Dashboard</h1>
+            <header className="dashboard-header">
+                <h1>Taskify</h1>
 
                 <button
                     className="logout-btn"
@@ -103,98 +107,101 @@ function Dashboard() {
                 >
                     Logout
                 </button>
-            </div>
+            </header>
 
-            <div className="task-form-card">
+            <form
+                className={`keep-note-box ${expanded ? "expanded" : ""}`}
+                onSubmit={handleCreateTask}
+            >
+                {expanded && (
+                    <input
+                        type="text"
+                        name="title"
+                        placeholder="Title"
+                        value={formData.title}
+                        onChange={handleChange}
+                        className="keep-title"
+                        required
+                    />
+                )}
 
-                <h2>Create New Task</h2>
+                <textarea
+                    name="description"
+                    placeholder="Take a note..."
+                    value={formData.description}
+                    onChange={handleChange}
+                    onFocus={() => setExpanded(true)}
+                    rows={expanded ? 4 : 1}
+                    className="keep-content"
+                />
 
-                <form onSubmit={handleCreateTask}>
+                {expanded && (
+                    <div className="keep-actions">
 
-                    <div className="input-group">
-                        <input
-                            type="text"
-                            name="title"
-                            placeholder="Enter task title"
-                            value={formData.title}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
+                        <button
+                            type="button"
+                            className="close-btn"
+                            onClick={() => {
+                                setExpanded(false);
+                            }}
+                        >
+                            Close
+                        </button>
 
-                    <div className="input-group">
-                        <textarea
-                            name="description"
-                            placeholder="Enter task description"
-                            value={formData.description}
-                            onChange={handleChange}
-                            rows="4"
-                        />
-                    </div>
-
-                    <button
-                        type="submit"
-                        className="login-btn"
-                    >
-                        Add Task
-                    </button>
-
-                </form>
-            </div>
-
-            <div className="tasks-section">
-
-                <h2>Your Tasks</h2>
-
-                {loading ? (
-                    <p className="empty-text">
-                        Loading Tasks...
-                    </p>
-                ) : tasks.length === 0 ? (
-                    <p className="empty-text">
-                        No tasks found.
-                    </p>
-                ) : (
-                    <div className="task-grid">
-
-                        {tasks.map((task) => (
-
-                            <div
-                                className="task-card"
-                                key={task._id}
-                            >
-                                <h3>{task.title}</h3>
-
-                                <p>
-                                    {task.description ||
-                                        "No description"}
-                                </p>
-
-                                <div className="task-footer">
-
-                                    <span className="task-status">
-                                        {task.status}
-                                    </span>
-
-                                    <button
-                                        className="delete-btn"
-                                        onClick={() =>
-                                            handleDeleteTask(
-                                                task._id
-                                            )
-                                        }
-                                    >
-                                        Delete
-                                    </button>
-
-                                </div>
-                            </div>
-
-                        ))}
+                        <button
+                            type="submit"
+                            className="create-btn"
+                        >
+                            Create
+                        </button>
 
                     </div>
                 )}
-            </div>
+            </form>
+
+            {loading ? (
+                <p className="empty-text">
+                    Loading Tasks...
+                </p>
+            ) : tasks.length === 0 ? (
+                <p className="empty-text">
+                    No notes yet.
+                </p>
+            ) : (
+                <div className="notes-grid">
+
+                    {tasks.map((task) => (
+                        <div
+                            key={task._id}
+                            className="note-card"
+                        >
+                            <h3>{task.title}</h3>
+
+                            <p>
+                                {task.description}
+                            </p>
+
+                            <div className="note-footer">
+
+                                <span className="task-status">
+                                    {task.status}
+                                </span>
+
+                                <button
+                                    className="delete-btn"
+                                    onClick={() =>
+                                        handleDeleteTask(task._id)
+                                    }
+                                >
+                                    Delete
+                                </button>
+
+                            </div>
+                        </div>
+                    ))}
+
+                </div>
+            )}
 
         </div>
     );

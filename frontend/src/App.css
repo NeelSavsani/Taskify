@@ -122,21 +122,19 @@ body {
 }
 
 /* =========================
-   DASHBOARD
+   GOOGLE KEEP STYLE DASHBOARD
 ========================= */
 
 .dashboard-container {
     min-height: 100vh;
-    max-width: 1300px;
-    margin: auto;
-    padding: 40px 20px;
+    padding: 20px 40px;
 }
 
 .dashboard-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 30px;
+    margin-bottom: 35px;
 }
 
 .dashboard-header h1 {
@@ -144,149 +142,178 @@ body {
     font-size: 32px;
 }
 
-.logout-btn {
-    background: #ef4444;
+.keep-note-box {
+    width: 100%;
+    max-width: 600px;
+    margin: auto;
+    background: #202124;
+    border: 1px solid #5f6368;
+    border-radius: 12px;
+    padding: 12px 16px;
+    box-shadow: 0 1px 8px rgba(0,0,0,0.4);
+}
+
+.keep-note-box.expanded {
+    padding: 15px;
+}
+
+.keep-title {
+    width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: white;
+    font-size: 18px;
+    margin-bottom: 12px;
+}
+
+.keep-content {
+    width: 100%;
+    border: none;
+    outline: none;
+    resize: none;
+    background: transparent;
+    color: white;
+    font-size: 15px;
+}
+
+.keep-content::placeholder,
+.keep-title::placeholder {
+    color: #9aa0a6;
+}
+
+.keep-actions {
+    margin-top: 15px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.close-btn {
+    background: transparent;
     color: white;
     border: none;
-    padding: 12px 20px;
-    border-radius: 10px;
+    padding: 10px 15px;
+    cursor: pointer;
+}
+
+.create-btn {
+    background: #8ab4f8;
+    color: black;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 6px;
     cursor: pointer;
     font-weight: 600;
 }
 
-.logout-btn:hover {
-    background: #dc2626;
+.notes-grid {
+    margin-top: 40px;
+
+    column-count: 4;
+    column-gap: 16px;
 }
 
-.task-form-card {
-    max-width: 700px;
-    margin: 0 auto 40px;
-    padding: 25px;
-
-    border-radius: 20px;
-
-    background: rgba(255,255,255,0.08);
-
-    backdrop-filter: blur(15px);
-
-    border: 1px solid rgba(255,255,255,0.1);
-}
-
-.task-form-card h2 {
-    color: white;
-    margin-bottom: 20px;
-}
-
-.task-form-card textarea,
-.task-form-card input {
+.note-card {
+    display: inline-block;
     width: 100%;
-    padding: 14px;
+    margin-bottom: 16px;
 
-    border-radius: 10px;
+    background: #202124;
 
-    border: 1px solid #475569;
+    border: 1px solid #5f6368;
 
-    background: rgba(255,255,255,0.05);
+    border-radius: 12px;
 
-    color: white;
+    padding: 16px;
 
-    outline: none;
+    break-inside: avoid;
+
+    transition: 0.2s;
 }
 
-.task-form-card textarea {
-    resize: vertical;
+.note-card:hover {
+    box-shadow: 0 2px 10px rgba(255,255,255,0.08);
 }
 
-.tasks-section h2 {
-    color: white;
-    margin-bottom: 20px;
-}
-
-.empty-text {
-    color: #cbd5e1;
-}
-
-.task-grid {
-    display: grid;
-
-    grid-template-columns:
-        repeat(auto-fill, minmax(300px, 1fr));
-
-    gap: 20px;
-}
-
-.task-card {
-    background: rgba(255,255,255,0.08);
-
-    border: 1px solid rgba(255,255,255,0.1);
-
-    backdrop-filter: blur(15px);
-
-    border-radius: 16px;
-
-    padding: 20px;
-
-    transition: 0.3s;
-}
-
-.task-card:hover {
-    transform: translateY(-4px);
-}
-
-.task-card h3 {
+.note-card h3 {
     color: white;
     margin-bottom: 10px;
 }
 
-.task-card p {
-    color: #cbd5e1;
-    margin-bottom: 20px;
-    line-height: 1.5;
+.note-card p {
+    color: #e8eaed;
+    line-height: 1.6;
+    margin-bottom: 15px;
+    white-space: pre-wrap;
 }
 
-.task-footer {
+.note-footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
 .task-status {
-    background: #3b82f6;
+    background: #3c4043;
     color: white;
-
-    padding: 6px 12px;
-
-    border-radius: 30px;
-
-    font-size: 13px;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
 }
 
 .delete-btn {
-    background: #ef4444;
-
+    background: #ea4335;
     color: white;
-
     border: none;
-
-    padding: 10px 14px;
-
-    border-radius: 8px;
-
+    padding: 8px 12px;
+    border-radius: 6px;
     cursor: pointer;
 }
 
 .delete-btn:hover {
-    background: #dc2626;
+    background: #d93025;
 }
 
-@media (max-width: 768px) {
+.logout-btn {
+    background: #ea4335;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.empty-text {
+    color: white;
+    text-align: center;
+    margin-top: 40px;
+}
+
+@media (max-width: 1200px) {
+    .notes-grid {
+        column-count: 3;
+    }
+}
+
+@media (max-width: 900px) {
+    .notes-grid {
+        column-count: 2;
+    }
+}
+
+@media (max-width: 600px) {
+
+    .dashboard-container {
+        padding: 20px;
+    }
+
+    .notes-grid {
+        column-count: 1;
+    }
 
     .dashboard-header {
         flex-direction: column;
         gap: 15px;
-    }
-
-    .dashboard-header h1 {
-        font-size: 26px;
     }
 }
