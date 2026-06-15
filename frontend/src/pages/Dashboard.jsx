@@ -15,6 +15,7 @@ function Dashboard() {
   const navigate = useNavigate();
 
   const noteRef = useRef(null);
+  const textareaRef = useRef(null);
 
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -33,6 +34,14 @@ function Dashboard() {
     description: "",
   });
 
+  // Automatically adjust textarea height based on contents
+  useEffect(() => {
+    if (editingTask && textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
+  }, [editData.description, editingTask]);
+
   const fetchTasks = async () => {
     try {
       const response = await API.get("/tasks", {
@@ -40,7 +49,6 @@ function Dashboard() {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-
       setTasks(response.data);
     } catch (error) {
       console.error(error);
@@ -51,12 +59,10 @@ function Dashboard() {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-
     if (!token) {
       navigate("/");
       return;
     }
-
     fetchTasks();
   }, []);
 
@@ -75,7 +81,6 @@ function Dashboard() {
     };
 
     document.addEventListener("mousedown", handleClickOutside);
-
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
@@ -104,22 +109,16 @@ function Dashboard() {
 
       setTasks((prevTasks) => [response.data, ...prevTasks]);
 
-      // Clear title and description fields
       setFormData({
         title: "",
         description: "",
       });
 
-      // Close the note box
       setExpanded(false);
-
-      // Remove focus from any active element
       document.activeElement?.blur();
 
-      // Force reset of textarea/input
       if (noteRef.current) {
         const inputs = noteRef.current.querySelectorAll("input, textarea");
-
         inputs.forEach((input) => {
           input.value = "";
         });
@@ -136,7 +135,6 @@ function Dashboard() {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-
       setTasks(tasks.filter((task) => task._id !== id));
     } catch (error) {
       console.error(error);
@@ -155,16 +153,12 @@ function Dashboard() {
 
       setTasks(
         tasks.map((task) =>
-          task._id === editingTask._id ? response.data : task,
-        ),
+          task._id === editingTask._id ? response.data : task
+        )
       );
 
       setEditingTask(null);
-
-      setEditData({
-        title: "",
-        description: "",
-      });
+      setEditData({ title: "", description: "" });
     } catch (error) {
       console.error(error);
     }
@@ -179,7 +173,6 @@ function Dashboard() {
     <div className="dashboard-container">
       <header className="dashboard-header">
         <h1>Taskify</h1>
-
         <button className="logout-btn" onClick={handleLogout}>
           Logout
         </button>
@@ -224,7 +217,6 @@ function Dashboard() {
               >
                 Close
               </button>
-
               <button
                 type="button"
                 className="create-btn"
@@ -260,19 +252,15 @@ function Dashboard() {
               className="note-card"
               onClick={(e) => {
                 e.stopPropagation();
-
                 setEditingTask(task);
-
                 setEditData({
                   title: task.title,
                   description: task.description,
                 });
-
                 setOpenMenu(null);
               }}
             >
               {task.title && <h3>{task.title}</h3>}
-
               <p>{task.description}</p>
 
               <div className="note-footer">
@@ -286,12 +274,10 @@ function Dashboard() {
                     title="Edit"
                     onClick={() => {
                       setEditingTask(task);
-
                       setEditData({
                         title: task.title,
                         description: task.description,
                       });
-
                       setOpenMenu(null);
                     }}
                   >
@@ -314,7 +300,6 @@ function Dashboard() {
                       className="icon-btn"
                       onClick={(e) => {
                         e.stopPropagation();
-
                         setOpenMenu(openMenu === task._id ? null : task._id);
                       }}
                     >
@@ -329,15 +314,12 @@ function Dashboard() {
                         <button onClick={() => setOpenMenu(null)}>
                           Archive
                         </button>
-
                         <button onClick={() => setOpenMenu(null)}>
                           Change Status
                         </button>
-
                         <button onClick={() => setOpenMenu(null)}>
                           Duplicate
                         </button>
-
                         <button onClick={() => setOpenMenu(null)}>
                           Details
                         </button>
@@ -362,6 +344,7 @@ function Dashboard() {
             <input
               type="text"
               className="modal-title"
+              placeholder="Title"
               value={editData.title}
               onChange={(e) =>
                 setEditData({
@@ -372,8 +355,9 @@ function Dashboard() {
             />
 
             <textarea
+              ref={textareaRef}
               className="modal-content"
-              rows="10"
+              placeholder="Note"
               value={editData.description}
               onChange={(e) =>
                 setEditData({
@@ -381,6 +365,7 @@ function Dashboard() {
                   description: e.target.value,
                 })
               }
+              rows="1"
             />
 
             <div className="modal-actions">
