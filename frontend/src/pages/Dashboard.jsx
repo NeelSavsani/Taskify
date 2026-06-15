@@ -34,7 +34,6 @@ function Dashboard() {
     description: "",
   });
 
-  // Calculate dynamic auto-grow until layout max boundary limit is reached
   useEffect(() => {
     if (editingTask && textareaRef.current) {
       textareaRef.current.style.height = "auto";
