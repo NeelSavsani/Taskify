@@ -116,13 +116,13 @@ function Dashboard() {
       document.activeElement?.blur();
 
       // Force reset of textarea/input
-      if (noteRef.current) {
-        const inputs = noteRef.current.querySelectorAll("input, textarea");
+        if (noteRef.current) {
+          const inputs = noteRef.current.querySelectorAll("input, textarea");
 
-        inputs.forEach((input) => {
-          input.value = "";
-        });
-      }
+          inputs.forEach((input) => {
+            input.value = "";
+          });
+        }
     } catch (error) {
       console.error(error);
     }
@@ -143,6 +143,8 @@ function Dashboard() {
   };
 
   const handleUpdateTask = async () => {
+    if (!editingTask) return;
+
     try {
       const response = await API.put(`/tasks/${editingTask._id}`, editData, {
         headers: {
@@ -241,7 +243,22 @@ function Dashboard() {
       ) : (
         <div className="notes-grid">
           {tasks.map((task) => (
-            <div key={task._id} className="note-card">
+            <div
+              key={task._id}
+              className="note-card"
+              onClick={(e) => {
+                e.stopPropagation();
+
+                setEditingTask(task);
+
+                setEditData({
+                  title: task.title,
+                  description: task.description,
+                });
+
+                setOpenMenu(null);
+              }}
+            >
               {task.title && <h3>{task.title}</h3>}
 
               <p>{task.description}</p>
@@ -272,7 +289,10 @@ function Dashboard() {
                   <button
                     className="icon-btn"
                     title="Delete"
-                    onClick={() => handleDeleteTask(task._id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteTask(task._id);
+                    }}
                   >
                     <FontAwesomeIcon icon={faTrash} />
                   </button>
@@ -280,15 +300,20 @@ function Dashboard() {
                   <div className="menu-wrapper">
                     <button
                       className="icon-btn"
-                      onClick={() =>
-                        setOpenMenu(openMenu === task._id ? null : task._id)
-                      }
+                      onClick={(e) => {
+                        e.stopPropagation();
+
+                        setOpenMenu(openMenu === task._id ? null : task._id);
+                      }}
                     >
                       <FontAwesomeIcon icon={faEllipsisVertical} />
                     </button>
 
                     {openMenu === task._id && (
-                      <div className="keep-menu">
+                      <div
+                        className="keep-menu"
+                        onClick={(e) => e.stopPropagation()}
+                      >
                         <button onClick={() => setOpenMenu(null)}>
                           Archive
                         </button>
@@ -317,7 +342,9 @@ function Dashboard() {
       {editingTask && (
         <div
           className="keep-modal-overlay"
-          onClick={() => setEditingTask(null)}
+          onClick={async () => {
+            await handleUpdateTask();
+          }}
         >
           <div className="keep-modal" onClick={(e) => e.stopPropagation()}>
             <input
@@ -345,15 +372,8 @@ function Dashboard() {
             />
 
             <div className="modal-actions">
-              <button
-                className="close-btn"
-                onClick={() => setEditingTask(null)}
-              >
+              <button className="close-btn" onClick={handleUpdateTask}>
                 Close
-              </button>
-
-              <button className="create-btn" onClick={handleUpdateTask}>
-                Save
               </button>
             </div>
           </div>
