@@ -1,3 +1,4 @@
+import Masonry from "react-masonry-css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import {
@@ -116,13 +117,13 @@ function Dashboard() {
       document.activeElement?.blur();
 
       // Force reset of textarea/input
-        if (noteRef.current) {
-          const inputs = noteRef.current.querySelectorAll("input, textarea");
+      if (noteRef.current) {
+        const inputs = noteRef.current.querySelectorAll("input, textarea");
 
-          inputs.forEach((input) => {
-            input.value = "";
-          });
-        }
+        inputs.forEach((input) => {
+          input.value = "";
+        });
+      }
     } catch (error) {
       console.error(error);
     }
@@ -241,7 +242,18 @@ function Dashboard() {
       ) : tasks.length === 0 ? (
         <p className="empty-text">No notes yet.</p>
       ) : (
-        <div className="notes-grid">
+        <Masonry
+          breakpointCols={{
+            default: 6,
+            1700: 5,
+            1400: 4,
+            1100: 3,
+            800: 2,
+            600: 1,
+          }}
+          className="notes-grid"
+          columnClassName="notes-grid-column"
+        >
           {tasks.map((task) => (
             <div
               key={task._id}
@@ -336,7 +348,7 @@ function Dashboard() {
               </div>
             </div>
           ))}
-        </div>
+        </Masonry>
       )}
 
       {editingTask && (

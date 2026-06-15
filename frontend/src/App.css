@@ -159,7 +159,7 @@ GOOGLE KEEP DASHBOARD
   padding: 20px 40px;
 }
 
-textarea{
+textarea {
   font-family: "Google Sans Text", sans-serif;
 }
 
@@ -284,21 +284,27 @@ CREATE NOTE
 NOTES GRID
 ========================= */
 
+/* =========================
+MASONRY LAYOUT
+========================= */
+
 .notes-grid {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 16px;
-  align-items: start;
+  display: flex;
+  margin-left: -16px;
+  width: auto;
+}
+
+.notes-grid-column {
+  padding-left: 16px;
+  background-clip: padding-box;
+}
+
+.notes-grid-column>.note-card {
+  margin-bottom: 16px;
 }
 
 .note-card {
-  display: inline-block;
   width: 100%;
-  margin-bottom: 16px;
-
-  break-inside: avoid;
-  -webkit-column-break-inside: avoid;
-  page-break-inside: avoid;
 
   background: #202124;
   border: 1px solid #5f6368;
@@ -308,11 +314,14 @@ NOTES GRID
 
   min-height: 120px;
 
-  overflow: visible;
+  overflow: hidden;
 
   cursor: pointer;
 
   transition: all 0.2s ease;
+
+  display: flex;
+  flex-direction: column;
 }
 
 .note-card:hover {
@@ -579,36 +588,6 @@ MENU
 RESPONSIVE
 ========================= */
 
-@media (max-width: 1700px) {
-  .notes-grid {
-    grid-template-columns: repeat(5, 1fr);
-  }
-}
-
-@media (max-width: 1400px) {
-  .notes-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
-@media (max-width: 1100px) {
-  .notes-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-@media (max-width: 800px) {
-  .notes-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 600px) {
-  .notes-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
 @media (max-width: 600px) {
   .dashboard-container {
     padding: 20px;
@@ -617,10 +596,6 @@ RESPONSIVE
   .dashboard-header {
     flex-direction: column;
     gap: 15px;
-  }
-
-  .notes-grid {
-    column-count: 1;
   }
 
   .keep-note-box {
