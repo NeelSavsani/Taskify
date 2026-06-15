@@ -5,6 +5,13 @@ import {
   faPen,
   faTrash,
   faEllipsisVertical,
+  faRotateRight,
+  faTableCellsLarge,
+  faMoon,
+  faSun,
+  faList,
+  faUser,
+  faRightFromBracket,
 } from "@fortawesome/free-solid-svg-icons";
 
 import { useEffect, useState, useRef } from "react";
@@ -16,6 +23,7 @@ function Dashboard() {
 
   const noteRef = useRef(null);
   const textareaRef = useRef(null);
+  const profileRef = useRef(null);
 
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -23,6 +31,11 @@ function Dashboard() {
   const [expanded, setExpanded] = useState(false);
   const [openMenu, setOpenMenu] = useState(null);
   const [editingTask, setEditingTask] = useState(null);
+  const [openProfile, setOpenProfile] = useState(false);
+
+  const [isListView, setIsListView] = useState(false);
+  const [isLightTheme, setIsLightTheme] = useState(false);
+  const [username, setUsername] = useState("");
 
   const [editData, setEditData] = useState({
     title: "",
@@ -42,6 +55,7 @@ function Dashboard() {
   }, [editData.description, editingTask]);
 
   const fetchTasks = async () => {
+    setLoading(true);
     try {
       const response = await API.get("/tasks", {
         headers: {
@@ -49,6 +63,13 @@ function Dashboard() {
         },
       });
       setTasks(response.data);
+
+      // Check if the backend response contains embedded user metadata anywhere in the payload
+      if (response.data && response.data.user && response.data.user.username) {
+        setUsername(response.data.user.username.trim());
+      } else if (response.data && response.data.length > 0 && response.data[0].user?.username) {
+        setUsername(response.data[0].user.username.trim());
+      }
     } catch (error) {
       console.error(error);
     } finally {
@@ -62,6 +83,31 @@ function Dashboard() {
       navigate("/");
       return;
     }
+
+    // Comprehensive multi-tier local verification sequence
+    try {
+      const savedName = localStorage.getItem("username") || localStorage.getItem("user");
+      const savedEmail = localStorage.getItem("email");
+
+      if (savedName && savedName !== "undefined" && savedName !== "null" && savedName.trim() !== "") {
+        setUsername(savedName.trim());
+      } else if (savedEmail && savedEmail !== "undefined" && savedEmail !== "null" && savedEmail.trim() !== "") {
+        setUsername(savedEmail.split("@")[0].trim());
+      } else {
+        // Fallback: Manually inspect and unpack the Base64 JSON Web Token layout
+        const payloadBase64 = token.split(".")[1];
+        if (payloadBase64) {
+          const decodedJson = JSON.parse(atob(payloadBase64));
+          const jwtName = decodedJson.username || decodedJson.name || decodedJson.email || decodedJson.userId;
+          if (jwtName) {
+            setUsername(jwtName.split("@")[0].trim());
+          }
+        }
+      }
+    } catch (e) {
+      console.error("Failed to parse user tracking metadata:", e);
+    }
+
     fetchTasks();
   }, []);
 
@@ -77,6 +123,10 @@ function Dashboard() {
       ) {
         setOpenMenu(null);
       }
+
+      if (profileRef.current && !profileRef.current.contains(event.target)) {
+        setOpenProfile(false);
+      }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
@@ -84,6 +134,18 @@ function Dashboard() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  const toggleTheme = () => {
+    setIsLightTheme((prev) => {
+      const nextTheme = !prev;
+      if (nextTheme) {
+        document.body.classList.add("light-theme");
+      } else {
+        document.body.classList.remove("light-theme");
+      }
+      return nextTheme;
+    });
+  };
 
   const handleChange = (e) => {
     setFormData({
@@ -164,19 +226,105 @@ function Dashboard() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
+    localStorage.clear(); // Clear all instances to prevent 'undefined' string persistent overrides
+    document.body.classList.remove("light-theme");
     navigate("/");
+  };
+
+  const handleProfileClick = () => {
+    setOpenProfile(false);
+    navigate("/profile");
+  };
+
+  const masonryBreakpoints = isListView
+    ? { default: 1 }
+    : {
+        default: 6,
+        1700: 5,
+        1400: 4,
+        1100: 3,
+        800: 2,
+        600: 1,
+      };
+
+  // Helper calculation function to derive single avatar initialization letter
+  const getAvatarLetter = () => {
+    if (username && username.trim().length > 0) {
+      return username.trim().charAt(0).toUpperCase();
+    }
+    
+    // Ultimate local storage verification checklist boundary check
+    const localUser = localStorage.getItem("username") || localStorage.getItem("user");
+    if (localUser && localUser !== "undefined" && localUser !== "null" && localUser.trim() !== "") {
+      return localUser.trim().charAt(0).toUpperCase();
+    }
+
+    const localEmail = localStorage.getItem("email");
+    if (localEmail && localEmail !== "undefined" && localEmail !== "null" && localEmail.trim() !== "") {
+      return localEmail.trim().charAt(0).toUpperCase();
+    }
+
+    return "U"; 
   };
 
   return (
     <div className="dashboard-container">
+      {/* GOOGLE KEEP STYLE HEADER */}
       <header className="dashboard-header">
-        <h1>Taskify</h1>
-        <button className="logout-btn" onClick={handleLogout}>
-          Logout
-        </button>
+        <div className="header-left">
+          <h1>Taskify</h1>
+        </div>
+
+        <div className="header-right">
+          <button 
+            className="header-btn" 
+            title="Refresh" 
+            onClick={fetchTasks}
+          >
+            <FontAwesomeIcon icon={faRotateRight} />
+          </button>
+
+          <button 
+            className="header-btn" 
+            title={isListView ? "Grid view" : "List view"} 
+            onClick={() => setIsListView(!isListView)}
+          >
+            <FontAwesomeIcon icon={isListView ? faTableCellsLarge : faList} />
+          </button>
+
+          <button 
+            className="header-btn" 
+            title="Toggle theme" 
+            onClick={toggleTheme}
+          >
+            <FontAwesomeIcon icon={isLightTheme ? faMoon : faSun} />
+          </button>
+
+          <div className="avatar-container" ref={profileRef}>
+            <div 
+              className="user-avatar" 
+              onClick={() => setOpenProfile(!openProfile)}
+            >
+              {getAvatarLetter()}
+            </div>
+            
+            {openProfile && (
+              <div className="profile-menu" onClick={(e) => e.stopPropagation()}>
+                <button onClick={handleProfileClick}>
+                  <FontAwesomeIcon icon={faUser} />
+                  <span>My Profile</span>
+                </button>
+                <button onClick={handleLogout}>
+                  <FontAwesomeIcon icon={faRightFromBracket} />
+                  <span>Logout</span>
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
       </header>
 
+      {/* CREATE NOTE INPUT */}
       <div
         ref={noteRef}
         className={`keep-note-box ${expanded ? "expanded" : ""}`}
@@ -228,20 +376,14 @@ function Dashboard() {
         )}
       </div>
 
+      {/* MASONRY CARDS LAYOUT CONTAINER */}
       {loading ? (
         <p className="empty-text">Loading Tasks...</p>
       ) : tasks.length === 0 ? (
         <p className="empty-text">No notes yet.</p>
       ) : (
         <Masonry
-          breakpointCols={{
-            default: 6,
-            1700: 5,
-            1400: 4,
-            1100: 3,
-            800: 2,
-            600: 1,
-          }}
+          breakpointCols={masonryBreakpoints}
           className="notes-grid"
           columnClassName="notes-grid-column"
         >
@@ -249,6 +391,7 @@ function Dashboard() {
             <div
               key={task._id}
               className="note-card"
+              style={{ maxWidth: isListView ? "600px" : "100%", margin: isListView ? "0 auto 16px" : "" }}
               onClick={(e) => {
                 e.stopPropagation();
                 setEditingTask(task);
@@ -332,6 +475,7 @@ function Dashboard() {
         </Masonry>
       )}
 
+      {/* EDIT MODAL ELEMENT */}
       {editingTask && (
         <div
           className="keep-modal-overlay"

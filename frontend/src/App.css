@@ -12,6 +12,13 @@ body {
   font-family: "Segoe UI", sans-serif;
   background: #202124;
   color: #e8eaed;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+/* Light Theme Variable Overrides */
+body.light-theme {
+  background: #ffffff;
+  color: #202124;
 }
 
 a {
@@ -28,7 +35,7 @@ a {
   justify-content: center;
   align-items: center;
   padding: 20px;
-  background: #202124;
+  background: inherit;
 }
 
 .login-card {
@@ -41,16 +48,28 @@ a {
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
 }
 
+body.light-theme .login-card {
+  background: #ffffff;
+  border: 1px solid #dadce0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
 .login-card h1 {
   text-align: center;
   color: #e8eaed;
   margin-bottom: 10px;
+}
+body.light-theme .login-card h1 {
+  color: #202124;
 }
 
 .subtitle {
   text-align: center;
   color: #9aa0a6;
   margin-bottom: 25px;
+}
+body.light-theme .subtitle {
+  color: #5f6368;
 }
 
 .input-group {
@@ -61,6 +80,9 @@ a {
   display: block;
   color: #e8eaed;
   margin-bottom: 8px;
+}
+body.light-theme .input-group label {
+  color: #202124;
 }
 
 .input-group input,
@@ -73,15 +95,29 @@ a {
   color: #e8eaed;
   outline: none;
 }
+body.light-theme .input-group input,
+body.light-theme .input-group textarea {
+  background: #ffffff;
+  border: 1px solid #dadce0;
+  color: #202124;
+}
 
 .input-group input:focus,
 .input-group textarea:focus {
   border-color: #8ab4f8;
 }
+body.light-theme .input-group input:focus,
+body.light-theme .input-group textarea:focus {
+  border-color: #1a73e8;
+}
 
 .input-group input::placeholder,
 .input-group textarea::placeholder {
   color: #9aa0a6;
+}
+body.light-theme .input-group input::placeholder,
+body.light-theme .input-group textarea::placeholder {
+  color: #5f6368;
 }
 
 .login-btn {
@@ -95,6 +131,10 @@ a {
   cursor: pointer;
   transition: 0.2s;
 }
+body.light-theme .login-btn {
+  background: #1a73e8;
+  color: #ffffff;
+}
 
 .login-btn:hover {
   opacity: 0.9;
@@ -105,9 +145,15 @@ a {
   margin-top: 20px;
   color: #9aa0a6;
 }
+body.light-theme .register-link {
+  color: #5f6368;
+}
 
 .register-link a {
   color: #8ab4f8;
+}
+body.light-theme .register-link a {
+  color: #1a73e8;
 }
 
 .error-box {
@@ -117,6 +163,10 @@ a {
   background: rgba(234, 67, 53, 0.15);
   border: 1px solid #ea4335;
   color: #e8eaed;
+}
+body.light-theme .error-box {
+  color: #c5221f;
+  background: #fce8e6;
 }
 
 /* =========================
@@ -142,20 +192,27 @@ a {
   cursor: pointer;
   font-size: 16px;
 }
+body.light-theme .eye-btn {
+  color: #5f6368;
+}
 
 .eye-btn:hover {
   color: #e8eaed;
 }
+body.light-theme .eye-btn:hover {
+  color: #202124;
+}
+
 
 /* =========================
-GOOGLE KEEP DASHBOARD
+GOOGLE KEEP DASHBOARD & HEADER
 ========================= */
 
 .dashboard-container {
   font-family: "Google Sans Text", sans-serif;
   min-height: 100vh;
-  background: #202124;
-  padding: 20px 40px;
+  background: inherit;
+  padding: 80px 24px 20px;
 }
 
 textarea {
@@ -163,31 +220,156 @@ textarea {
 }
 
 .dashboard-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 30px;
+  padding: 0 16px;
+  background: #202124;
+  border-bottom: 1px solid #5f6368;
+  z-index: 5000;
+  transition: background 0.2s ease, border-color 0.2s ease;
 }
 
-.dashboard-header h1 {
+body.light-theme .dashboard-header {
+  background: #ffffff;
+  border-bottom: 1px solid #dadce0;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-left h1 {
   color: #e8eaed;
-  font-size: 32px;
-  font-weight: 600;
+  font-size: 22px;
+  font-weight: 400;
+}
+body.light-theme .header-left h1 {
+  color: #202124; /* Title matches brand text colors */
 }
 
-.logout-btn {
-  background: #ea4335;
-  color: white;
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.header-btn {
+  width: 44px;
+  height: 44px;
   border: none;
-  padding: 10px 18px;
-  border-radius: 8px;
+  outline: none;
+  background: transparent;
+  color: #99999b;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   cursor: pointer;
-  font-weight: 500;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+body.light-theme .header-btn {
+  color: #202124; /* Exactly #202124 in light mode */
 }
 
-.logout-btn:hover {
-  opacity: 0.9;
+.header-btn:hover {
+  color: #e8eaed;
+  background: rgba(232, 234, 237, 0.08);
 }
+body.light-theme .header-btn:hover {
+  background: rgba(32, 33, 36, 0.08);
+}
+
+.header-btn svg {
+  font-size: 18px;
+}
+
+/* User Profile Avatar */
+.avatar-container {
+  position: relative;
+}
+
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #8ab4f8;
+  color: #202124;
+  font-size: 15px;
+  font-weight: 600;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  text-transform: uppercase;
+  margin-left: 4px;
+  user-select: none;
+}
+body.light-theme .user-avatar {
+  background: #1a73e8;
+  color: #ffffff;
+}
+
+/* Avatar Dropdown Menu */
+.profile-menu {
+  position: absolute;
+  top: 45px;
+  right: 0;
+  width: 170px;
+  background: #202124;
+  border: 1px solid #5f6368;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+  padding: 4px 0;
+  overflow: hidden;
+  z-index: 6000;
+}
+body.light-theme .profile-menu {
+  background: #ffffff;
+  border: 1px solid #dadce0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.profile-menu button {
+  width: 100%;
+  padding: 10px 16px;
+  border: none;
+  background: transparent;
+  color: #e8eaed;
+  text-align: left;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: background 0.15s ease;
+}
+body.light-theme .profile-menu button {
+  color: #202124;
+}
+
+.profile-menu button svg {
+  width: 16px;
+  color: #9aa0a6;
+}
+body.light-theme .profile-menu button svg {
+  color: #202124; /* Inline dropdown icons match #202124 */
+}
+
+.profile-menu button:hover {
+  background: #3c4043;
+}
+body.light-theme .profile-menu button:hover {
+  background: #f1f3f4;
+}
+
 
 /* =========================
 CREATE NOTE
@@ -196,24 +378,31 @@ CREATE NOTE
 .keep-note-box {
   width: 100%;
   max-width: 600px;
-  margin: 0 auto 35px;
+  margin: 20px auto 35px;
   background: #202124;
   border: 1px solid #5f6368;
   border-radius: 12px;
   padding: 14px 16px;
-  transition: 0.2s;
+  transition: box-shadow 0.2s;
+}
+body.light-theme .keep-note-box {
+  background: #ffffff;
+  border: 1px solid #dadce0;
 }
 
 .keep-note-box.expanded {
   padding: 16px;
   box-shadow: 0 1px 8px rgba(0, 0, 0, 0.45);
 }
+body.light-theme .keep-note-box.expanded {
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.15);
+}
 
 .keep-placeholder {
   width: 100%;
   border: none;
   background: transparent;
-  color: #e8eaed;
+  color: inherit;
   font-size: 16px;
   outline: none;
   cursor: text;
@@ -222,12 +411,15 @@ CREATE NOTE
 .keep-placeholder::placeholder {
   color: #9aa0a6;
 }
+body.light-theme .keep-placeholder::placeholder {
+  color: #5f6368;
+}
 
 .keep-title {
   width: 100%;
   border: none;
   background: transparent;
-  color: #e8eaed;
+  color: inherit;
   font-size: 17px;
   font-weight: 500;
   margin-bottom: 12px;
@@ -238,7 +430,7 @@ CREATE NOTE
   width: 100%;
   border: none;
   background: transparent;
-  color: #e8eaed;
+  color: inherit;
   resize: none;
   outline: none;
   font-size: 15px;
@@ -247,6 +439,10 @@ CREATE NOTE
 .keep-title::placeholder,
 .keep-content::placeholder {
   color: #9aa0a6;
+}
+body.light-theme .keep-title::placeholder,
+body.light-theme .keep-content::placeholder {
+  color: #5f6368;
 }
 
 .keep-actions {
@@ -259,7 +455,7 @@ CREATE NOTE
 .close-btn {
   background: transparent;
   border: none;
-  color: #e8eaed;
+  color: inherit;
   cursor: pointer;
   padding: 8px 12px;
   border-radius: 4px;
@@ -267,6 +463,9 @@ CREATE NOTE
 
 .close-btn:hover {
   background: #3c4043;
+}
+body.light-theme .close-btn:hover {
+  background: #f1f3f4;
 }
 
 .create-btn {
@@ -277,6 +476,10 @@ CREATE NOTE
   border-radius: 6px;
   cursor: pointer;
   font-weight: 600;
+}
+body.light-theme .create-btn {
+  background: #1a73e8;
+  color: #ffffff;
 }
 
 /* =========================
@@ -303,23 +506,31 @@ NOTES GRID
   background: #202124;
   border: 1px solid #5f6368;
   border-radius: 12px;
-  padding: 12px 14px 6px; /* Reduced vertical paddings to match Google Keep */
-  min-height: 40px; /* Let natural content size determine smallest dimension */
+  padding: 12px 14px 6px;
+  min-height: 40px;
   overflow: hidden;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: border-color 0.2s, box-shadow 0.2s;
   display: flex;
   flex-direction: column;
+}
+body.light-theme .note-card {
+  background: #ffffff;
+  border: 1px solid #dadce0;
 }
 
 .note-card:hover {
   border-color: #80868b;
   box-shadow: 0 1px 8px rgba(255, 255, 255, 0.08);
 }
+body.light-theme .note-card:hover {
+  border-color: #202124;
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.12);
+}
 
 .note-card h3 {
-  margin-bottom: 6px; /* Tightened gap below header */
-  font-size: 16px; /* Keep precise subtle dimensions */
+  margin-bottom: 6px;
+  font-size: 16px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -335,7 +546,10 @@ NOTES GRID
   display: -webkit-box;
   -webkit-line-clamp: 8;
   -webkit-box-orient: vertical;
-  flex-grow: 1; /* Pushes content down fluidly without leaving rigid empty space */
+  flex-grow: 1;
+}
+body.light-theme .note-card p {
+  color: #202124;
 }
 
 /* =========================
@@ -346,8 +560,8 @@ FOOTER ACTIONS
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  margin-top: 4px; /* Reduced layout margin to keep buttons tucked closer to the note body */
-  min-height: 32px; /* Ensure space for tools header without breaking baseline flow */
+  margin-top: 4px;
+  min-height: 32px;
 }
 
 .note-actions {
@@ -371,7 +585,7 @@ ICON BUTTONS
 ========================= */
 
 .icon-btn {
-  width: 30px; /* Reduced sizing to seamlessly match Google Keep's card actions look */
+  width: 30px;
   height: 30px;
   border: none;
   outline: none;
@@ -384,10 +598,17 @@ ICON BUTTONS
   cursor: pointer;
   transition: all 0.2s ease;
 }
+body.light-theme .icon-btn {
+  color: #202124; /* Card tools icons default to #202124 in light mode */
+}
 
 .icon-btn:hover {
   background: #3c4043;
   color: #e8eaed;
+}
+body.light-theme .icon-btn:hover {
+  background: #f1f3f4;
+  color: #202124;
 }
 
 /* =========================
@@ -412,6 +633,11 @@ MENU
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
   z-index: 1000;
 }
+body.light-theme .keep-menu {
+  background: #ffffff;
+  border: 1px solid #dadce0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
 
 .keep-menu button {
   width: 100%;
@@ -422,9 +648,15 @@ MENU
   text-align: left;
   cursor: pointer;
 }
+body.light-theme .keep-menu button {
+  color: #202124;
+}
 
 .keep-menu button:hover {
   background: #3c4043;
+}
+body.light-theme .keep-menu button:hover {
+  background: #f1f3f4;
 }
 
 .empty-text {
@@ -462,13 +694,18 @@ MENU
   flex-direction: column;
   overflow: hidden;
 }
+body.light-theme .keep-modal {
+  background: #ffffff;
+  border: 1px solid #dadce0;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
 
 .modal-title {
   width: 100%;
   border: none;
   outline: none;
   background: transparent;
-  color: #e8eaed;
+  color: inherit;
   font-size: 22px;
   font-weight: 400;
   margin-bottom: 16px;
@@ -481,7 +718,7 @@ MENU
   outline: none;
   resize: none;
   background: transparent;
-  color: #e8eaed;
+  color: inherit;
   font-size: 16px;
   line-height: 1.6;
   overflow-y: auto;
@@ -510,6 +747,10 @@ MENU
 .modal-content::placeholder {
   color: #9aa0a6;
 }
+body.light-theme .modal-title::placeholder,
+body.light-theme .modal-content::placeholder {
+  color: #5f6368;
+}
 
 .modal-actions {
   display: flex;
@@ -525,14 +766,8 @@ RESPONSIVE
 
 @media (max-width: 600px) {
   .dashboard-container {
-    padding: 20px;
+    padding: 85px 20px 20px;
   }
-
-  .dashboard-header {
-    flex-direction: column;
-    gap: 15px;
-  }
-
   .keep-note-box {
     max-width: 100%;
   }
