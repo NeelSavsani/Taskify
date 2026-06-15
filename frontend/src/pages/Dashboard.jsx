@@ -1,3 +1,11 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
+import {
+  faPen,
+  faTrash,
+  faEllipsisVertical,
+} from "@fortawesome/free-solid-svg-icons";
+
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../services/api";
@@ -93,14 +101,28 @@ function Dashboard() {
         },
       });
 
-      setTasks([response.data, ...tasks]);
+      setTasks((prevTasks) => [response.data, ...prevTasks]);
 
+      // Clear title and description fields
       setFormData({
         title: "",
         description: "",
       });
 
+      // Close the note box
       setExpanded(false);
+
+      // Remove focus from any active element
+      document.activeElement?.blur();
+
+      // Force reset of textarea/input
+      if (noteRef.current) {
+        const inputs = noteRef.current.querySelectorAll("input, textarea");
+
+        inputs.forEach((input) => {
+          input.value = "";
+        });
+      }
     } catch (error) {
       console.error(error);
     }
@@ -135,6 +157,11 @@ function Dashboard() {
       );
 
       setEditingTask(null);
+
+      setEditData({
+        title: "",
+        description: "",
+      });
     } catch (error) {
       console.error(error);
     }
@@ -227,6 +254,7 @@ function Dashboard() {
                 >
                   <button
                     className="icon-btn"
+                    title="Edit"
                     onClick={() => {
                       setEditingTask(task);
 
@@ -238,7 +266,7 @@ function Dashboard() {
                       setOpenMenu(null);
                     }}
                   >
-                    ✏️
+                    <FontAwesomeIcon icon={faPen} />
                   </button>
 
                   <button
@@ -246,7 +274,7 @@ function Dashboard() {
                     title="Delete"
                     onClick={() => handleDeleteTask(task._id)}
                   >
-                    🗑️
+                    <FontAwesomeIcon icon={faTrash} />
                   </button>
 
                   <div className="menu-wrapper">
@@ -256,7 +284,7 @@ function Dashboard() {
                         setOpenMenu(openMenu === task._id ? null : task._id)
                       }
                     >
-                      ⋮
+                      <FontAwesomeIcon icon={faEllipsisVertical} />
                     </button>
 
                     {openMenu === task._id && (

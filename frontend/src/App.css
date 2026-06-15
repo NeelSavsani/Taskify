@@ -538,3 +538,14 @@ RESPONSIVE
     max-width: 100%;
   }
 }
+
+/* ICONS */
+.icon-btn svg {
+    font-size: 14px;
+}
+
+.icon-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
