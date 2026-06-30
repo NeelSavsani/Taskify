@@ -318,8 +318,9 @@ body.light-theme .header-btn:hover {
   height: 32px;
   border-radius: 50%;
   background: #8ab4f8;
-  color: #202124;
-  font-size: 15px;
+  font-family: "Google Sans Text", sans-serif;
+  color: #fff;
+  font-size: 20px;
   font-weight: 600;
   display: flex;
   justify-content: center;

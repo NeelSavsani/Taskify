@@ -37,6 +37,29 @@ function Dashboard() {
   const [isLightTheme, setIsLightTheme] = useState(false);
   const [username, setUsername] = useState("");
 
+  const avatarColors = [
+    "#1A73E8", // Blue
+    "#34A853", // Green
+    "#EA4335", // Red
+    "#FBBC04", // Yellow
+    "#A142F4", // Purple
+    "#F4511E", // Deep Orange
+    "#00ACC1", // Cyan
+    "#7CB342", // Lime
+    "#8E24AA", // Violet
+    "#E91E63", // Pink
+    "#5E35B1", // Indigo
+    "#039BE5", // Light Blue
+    "#00897B", // Teal
+    "#43A047", // Green
+    "#F57C00", // Orange
+    "#C2185B", // Dark Pink
+    "#6D4C41", // Brown
+    "#546E7A", // Blue Grey
+  ];
+
+  const [avatarColor, setAvatarColor] = useState("#1A73E8");
+
   const [editData, setEditData] = useState({
     title: "",
     description: "",
@@ -126,6 +149,10 @@ function Dashboard() {
     } catch (e) {
       console.error("Failed to parse user tracking metadata:", e);
     }
+
+    const randomIndex = Math.floor(Math.random() * avatarColors.length);
+
+    setAvatarColor(avatarColors[randomIndex]);
 
     fetchTasks();
   }, []);
@@ -356,6 +383,9 @@ function Dashboard() {
           <div className="avatar-container" ref={profileRef}>
             <div
               className="user-avatar"
+              style={{
+                backgroundColor: avatarColor,
+              }}
               onClick={() => setOpenProfile(!openProfile)}
             >
               {getAvatarLetter()}
