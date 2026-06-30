@@ -64,10 +64,13 @@ function Dashboard() {
       });
       setTasks(response.data);
 
-      // Check if the backend response contains embedded user metadata anywhere in the payload
       if (response.data && response.data.user && response.data.user.username) {
         setUsername(response.data.user.username.trim());
-      } else if (response.data && response.data.length > 0 && response.data[0].user?.username) {
+      } else if (
+        response.data &&
+        response.data.length > 0 &&
+        response.data[0].user?.username
+      ) {
         setUsername(response.data[0].user.username.trim());
       }
     } catch (error) {
@@ -84,21 +87,34 @@ function Dashboard() {
       return;
     }
 
-    // Comprehensive multi-tier local verification sequence
     try {
-      const savedName = localStorage.getItem("username") || localStorage.getItem("user");
+      const savedName =
+        localStorage.getItem("username") || localStorage.getItem("user");
       const savedEmail = localStorage.getItem("email");
 
-      if (savedName && savedName !== "undefined" && savedName !== "null" && savedName.trim() !== "") {
+      if (
+        savedName &&
+        savedName !== "undefined" &&
+        savedName !== "null" &&
+        savedName.trim() !== ""
+      ) {
         setUsername(savedName.trim());
-      } else if (savedEmail && savedEmail !== "undefined" && savedEmail !== "null" && savedEmail.trim() !== "") {
+      } else if (
+        savedEmail &&
+        savedEmail !== "undefined" &&
+        savedEmail !== "null" &&
+        savedEmail.trim() !== ""
+      ) {
         setUsername(savedEmail.split("@")[0].trim());
       } else {
-        // Fallback: Manually inspect and unpack the Base64 JSON Web Token layout
         const payloadBase64 = token.split(".")[1];
         if (payloadBase64) {
           const decodedJson = JSON.parse(atob(payloadBase64));
-          const jwtName = decodedJson.username || decodedJson.name || decodedJson.email || decodedJson.userId;
+          const jwtName =
+            decodedJson.username ||
+            decodedJson.name ||
+            decodedJson.email ||
+            decodedJson.userId;
           if (jwtName) {
             setUsername(jwtName.split("@")[0].trim());
           }
@@ -214,8 +230,8 @@ function Dashboard() {
 
       setTasks(
         tasks.map((task) =>
-          task._id === editingTask._id ? response.data : task
-        )
+          task._id === editingTask._id ? response.data : task,
+        ),
       );
 
       setEditingTask(null);
@@ -226,7 +242,7 @@ function Dashboard() {
   };
 
   const handleLogout = () => {
-    localStorage.clear(); // Clear all instances to prevent 'undefined' string persistent overrides
+    localStorage.clear();
     document.body.classList.remove("light-theme");
     navigate("/");
   };
@@ -247,24 +263,49 @@ function Dashboard() {
         600: 1,
       };
 
-  // Helper calculation function to derive single avatar initialization letter
   const getAvatarLetter = () => {
-    if (username && username.trim().length > 0) {
+    if (username?.trim()) {
       return username.trim().charAt(0).toUpperCase();
     }
-    
-    // Ultimate local storage verification checklist boundary check
-    const localUser = localStorage.getItem("username") || localStorage.getItem("user");
-    if (localUser && localUser !== "undefined" && localUser !== "null" && localUser.trim() !== "") {
-      return localUser.trim().charAt(0).toUpperCase();
+
+    const storedUsername = localStorage.getItem("username");
+    if (
+      storedUsername &&
+      storedUsername !== "undefined" &&
+      storedUsername !== "null"
+    ) {
+      return storedUsername.trim().charAt(0).toUpperCase();
     }
 
-    const localEmail = localStorage.getItem("email");
-    if (localEmail && localEmail !== "undefined" && localEmail !== "null" && localEmail.trim() !== "") {
-      return localEmail.trim().charAt(0).toUpperCase();
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        if (parsedUser?.name) return parsedUser.name.trim().charAt(0).toUpperCase();
+        if (parsedUser?.username) return parsedUser.username.trim().charAt(0).toUpperCase();
+        if (parsedUser?.email) return parsedUser.email.trim().charAt(0).toUpperCase();
+      } catch {
+        return storedUser.trim().charAt(0).toUpperCase();
+      }
     }
 
-    return "U"; 
+    const storedEmail = localStorage.getItem("email");
+    if (storedEmail && storedEmail !== "undefined" && storedEmail !== "null") {
+      return storedEmail.trim().charAt(0).toUpperCase();
+    }
+
+    try {
+      const token = localStorage.getItem("token");
+      if (token) {
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        const name = payload.name || payload.username || payload.email;
+        if (name) return name.trim().charAt(0).toUpperCase();
+      }
+    } catch (error) {
+      console.error(error);
+    }
+
+    return "U";
   };
 
   return (
@@ -272,44 +313,54 @@ function Dashboard() {
       {/* GOOGLE KEEP STYLE HEADER */}
       <header className="dashboard-header">
         <div className="header-left">
+          {/* Public folder image route resource pointer */}
+          <img 
+            src="/Logo.png" 
+            alt="Taskify Logo" 
+            style={{ 
+              width: "40px", 
+              height: "40px", 
+              objectFit: "contain",
+              marginRight: "4px"
+            }} 
+          />
           <h1>Taskify</h1>
         </div>
 
         <div className="header-right">
-          <button 
-            className="header-btn" 
-            title="Refresh" 
-            onClick={fetchTasks}
-          >
+          <button className="header-btn" title="Refresh" onClick={fetchTasks}>
             <FontAwesomeIcon icon={faRotateRight} />
           </button>
 
-          <button 
-            className="header-btn" 
-            title={isListView ? "Grid view" : "List view"} 
+          <button
+            className="header-btn"
+            title={isListView ? "Grid view" : "List view"}
             onClick={() => setIsListView(!isListView)}
           >
             <FontAwesomeIcon icon={isListView ? faTableCellsLarge : faList} />
           </button>
 
-          <button 
-            className="header-btn" 
-            title="Toggle theme" 
+          <button
+            className="header-btn"
+            title="Toggle theme"
             onClick={toggleTheme}
           >
             <FontAwesomeIcon icon={isLightTheme ? faMoon : faSun} />
           </button>
 
           <div className="avatar-container" ref={profileRef}>
-            <div 
-              className="user-avatar" 
+            <div
+              className="user-avatar"
               onClick={() => setOpenProfile(!openProfile)}
             >
               {getAvatarLetter()}
             </div>
-            
+
             {openProfile && (
-              <div className="profile-menu" onClick={(e) => e.stopPropagation()}>
+              <div
+                className="profile-menu"
+                onClick={(e) => e.stopPropagation()}
+              >
                 <button onClick={handleProfileClick}>
                   <FontAwesomeIcon icon={faUser} />
                   <span>My Profile</span>
@@ -391,7 +442,10 @@ function Dashboard() {
             <div
               key={task._id}
               className="note-card"
-              style={{ maxWidth: isListView ? "600px" : "100%", margin: isListView ? "0 auto 16px" : "" }}
+              style={{
+                maxWidth: isListView ? "600px" : "100%",
+                margin: isListView ? "0 auto 16px" : "",
+              }}
               onClick={(e) => {
                 e.stopPropagation();
                 setEditingTask(task);
