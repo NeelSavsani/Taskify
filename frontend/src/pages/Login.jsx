@@ -2,145 +2,153 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-    faEye,
-    faEyeSlash,
+  faEye,
+  faEyeSlash,
 } from "@fortawesome/free-solid-svg-icons";
 import API from "../services/api";
 
 function Login() {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    const [formData, setFormData] = useState({
-        email: "",
-        password: "",
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
     });
+  };
 
-    const [showPassword, setShowPassword] = useState(false);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-    const [error, setError] = useState("");
-    const [loading, setLoading] = useState(false);
+    setError("");
+    setLoading(true);
 
-    const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value,
-        });
-    };
+    try {
+      const response = await API.post("/auth/login", formData);
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+      // Save token
+      localStorage.setItem("token", response.data.token);
 
-        setError("");
-        setLoading(true);
+      // Save username (supports multiple backend response formats)
+      const username =
+        response.data.user?.username ||
+        response.data.username ||
+        response.data.user?.name ||
+        response.data.name ||
+        "";
 
-        try {
-            const response = await API.post(
-                "/auth/login",
-                formData
-            );
+      if (username) {
+        localStorage.setItem("username", username);
+      }
 
-            localStorage.setItem(
-                "token",
-                response.data.token
-            );
+      // Save email
+      const email =
+        response.data.user?.email ||
+        response.data.email ||
+        formData.email;
 
-            navigate("/dashboard");
-        } catch (err) {
-            setError(
-                err.response?.data?.message ||
-                    "Invalid email or password"
-            );
-        } finally {
-            setLoading(false);
-        }
-    };
+      if (email) {
+        localStorage.setItem("email", email);
+      }
 
-    return (
-        <div className="login-container">
-            <div className="login-card">
-                <h1>Todo Manager</h1>
+      navigate("/dashboard");
+    } catch (err) {
+      setError(
+        err.response?.data?.message ||
+          "Invalid email or password"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
-                <p className="subtitle">
-                    Sign in to manage your tasks
-                </p>
+  return (
+    <div className="login-container">
+      <div className="login-card">
+        <h1>Todo Manager</h1>
 
-                {error && (
-                    <div className="error-box">
-                        {error}
-                    </div>
-                )}
+        <p className="subtitle">
+          Sign in to manage your tasks
+        </p>
 
-                <form onSubmit={handleSubmit}>
-                    <div className="input-group">
-                        <label>Email Address</label>
+        {error && (
+          <div className="error-box">
+            {error}
+          </div>
+        )}
 
-                        <input
-                            type="email"
-                            name="email"
-                            placeholder="Enter your email"
-                            value={formData.email}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
+        <form onSubmit={handleSubmit}>
+          <div className="input-group">
+            <label>Email Address</label>
 
-                    <div className="input-group">
-                        <label>Password</label>
+            <input
+              type="email"
+              name="email"
+              placeholder="Enter your email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-                        <div className="password-wrapper">
-                            <input
-                                type={
-                                    showPassword
-                                        ? "text"
-                                        : "password"
-                                }
-                                name="password"
-                                placeholder="Enter your password"
-                                value={formData.password}
-                                onChange={handleChange}
-                                required
-                            />
+          <div className="input-group">
+            <label>Password</label>
 
-                            <button
-                                type="button"
-                                className="eye-btn"
-                                onClick={() =>
-                                    setShowPassword(
-                                        !showPassword
-                                    )
-                                }
-                            >
-                                <FontAwesomeIcon
-                                    icon={
-                                        showPassword
-                                            ? faEyeSlash
-                                            : faEye
-                                    }
-                                />
-                            </button>
-                        </div>
-                    </div>
+            <div className="password-wrapper">
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                placeholder="Enter your password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+              />
 
-                    <button
-                        type="submit"
-                        className="login-btn"
-                        disabled={loading}
-                    >
-                        {loading
-                            ? "Signing In..."
-                            : "Login"}
-                    </button>
-                </form>
-
-                <p className="register-link">
-                    Don't have an account?{" "}
-                    <Link to="/register">
-                        Create Account
-                    </Link>
-                </p>
+              <button
+                type="button"
+                className="eye-btn"
+                onClick={() =>
+                  setShowPassword(!showPassword)
+                }
+              >
+                <FontAwesomeIcon
+                  icon={
+                    showPassword
+                      ? faEyeSlash
+                      : faEye
+                  }
+                />
+              </button>
             </div>
-        </div>
-    );
+          </div>
+
+          <button
+            type="submit"
+            className="login-btn"
+            disabled={loading}
+          >
+            {loading ? "Signing In..." : "Login"}
+          </button>
+        </form>
+
+        <p className="register-link">
+          Don't have an account?{" "}
+          <Link to="/register">
+            Create Account
+          </Link>
+        </p>
+      </div>
+    </div>
+  );
 }
 
 export default Login;

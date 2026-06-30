@@ -64,14 +64,20 @@ function Dashboard() {
       });
       setTasks(response.data);
 
-      if (response.data && response.data.user && response.data.user.username) {
-        setUsername(response.data.user.username.trim());
+      if (response.data && response.data.user) {
+        const apiUser =
+          response.data.user.username ||
+          response.data.user.email ||
+          response.data.user.name;
+        if (apiUser) setUsername(apiUser.trim());
       } else if (
         response.data &&
         response.data.length > 0 &&
-        response.data[0].user?.username
+        response.data[0].user
       ) {
-        setUsername(response.data[0].user.username.trim());
+        const noteUser =
+          response.data[0].user.username || response.data[0].user.email;
+        if (noteUser) setUsername(noteUser.trim());
       }
     } catch (error) {
       console.error(error);
@@ -111,10 +117,7 @@ function Dashboard() {
         if (payloadBase64) {
           const decodedJson = JSON.parse(atob(payloadBase64));
           const jwtName =
-            decodedJson.username ||
-            decodedJson.name ||
-            decodedJson.email ||
-            decodedJson.userId;
+            decodedJson.username || decodedJson.name || decodedJson.email;
           if (jwtName) {
             setUsername(jwtName.split("@")[0].trim());
           }
@@ -264,48 +267,51 @@ function Dashboard() {
       };
 
   const getAvatarLetter = () => {
-    if (username?.trim()) {
+    // Priority 1: username stored in state
+    if (username && username.trim()) {
       return username.trim().charAt(0).toUpperCase();
     }
 
+    // Priority 2: try localStorage username
     const storedUsername = localStorage.getItem("username");
     if (
       storedUsername &&
       storedUsername !== "undefined" &&
-      storedUsername !== "null"
+      storedUsername !== "null" &&
+      storedUsername.trim()
     ) {
       return storedUsername.trim().charAt(0).toUpperCase();
     }
 
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      try {
-        const parsedUser = JSON.parse(storedUser);
-        if (parsedUser?.name) return parsedUser.name.trim().charAt(0).toUpperCase();
-        if (parsedUser?.username) return parsedUser.username.trim().charAt(0).toUpperCase();
-        if (parsedUser?.email) return parsedUser.email.trim().charAt(0).toUpperCase();
-      } catch {
-        return storedUser.trim().charAt(0).toUpperCase();
-      }
-    }
-
+    // Priority 3: try email
     const storedEmail = localStorage.getItem("email");
-    if (storedEmail && storedEmail !== "undefined" && storedEmail !== "null") {
+    if (
+      storedEmail &&
+      storedEmail !== "undefined" &&
+      storedEmail !== "null" &&
+      storedEmail.trim()
+    ) {
       return storedEmail.trim().charAt(0).toUpperCase();
     }
 
+    // Priority 4: decode JWT
     try {
       const token = localStorage.getItem("token");
+
       if (token) {
         const payload = JSON.parse(atob(token.split(".")[1]));
-        const name = payload.name || payload.username || payload.email;
-        if (name) return name.trim().charAt(0).toUpperCase();
+
+        const name = payload.username || payload.name || payload.email;
+
+        if (name) {
+          return name.trim().charAt(0).toUpperCase();
+        }
       }
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error(err);
     }
 
-    return "U";
+    return "?";
   };
 
   return (
@@ -313,16 +319,15 @@ function Dashboard() {
       {/* GOOGLE KEEP STYLE HEADER */}
       <header className="dashboard-header">
         <div className="header-left">
-          {/* Public folder image route resource pointer */}
-          <img 
-            src="/Logo.png" 
-            alt="Taskify Logo" 
-            style={{ 
-              width: "40px", 
-              height: "40px", 
+          <img
+            src="/Logo.png"
+            alt="Taskify Logo"
+            style={{
+              width: "40px",
+              height: "40px",
               objectFit: "contain",
-              marginRight: "4px"
-            }} 
+              marginRight: "4px",
+            }}
           />
           <h1>Taskify</h1>
         </div>
